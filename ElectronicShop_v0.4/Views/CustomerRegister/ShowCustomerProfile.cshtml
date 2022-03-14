@@ -1,0 +1,49 @@
+﻿@model ElectronicShop_v0._4.Models.Customers
+
+@{
+    ViewBag.Title = "CustomerProfile";
+}
+
+<h2>Customer Profile</h2>
+
+<div>
+    <h4>Customer Profile</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.nickName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.nickName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.emailAdress)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.emailAdress)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.phoneNumber)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.phoneNumber)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.password)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.password)
+        </dd>
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Order list", "ShowCustomerOrders", "CustomerRegister") |
+    @Html.ActionLink("Back to homepage", "Index", "Home")
+</p>
