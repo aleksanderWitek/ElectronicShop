@@ -5,6 +5,7 @@ using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Data.Entity;
 
 namespace ElectronicShop_v0._4.Controllers
 {
@@ -82,7 +83,7 @@ namespace ElectronicShop_v0._4.Controllers
         }
 
 
-            [HttpPost]
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult GetProductAmount(int additionalAmount)
         {
@@ -93,28 +94,41 @@ namespace ElectronicShop_v0._4.Controllers
             var choosenProduct = (Products)Session["choosenProduct"];
             var choosenProductID = choosenProduct.productID;
 
-            var orderedProduct = from x in db.Products.Where(m => m.productID == choosenProductID)
-                                 from z in db.Customers.Where(n => n.customerID == customerProfile.customerID)
-                                 select new CustomerOrders
-                                 {
-                                     price = x.price * additionalAmount,
-                                     productName = x.name,
-                                     productID = x.productID,
-                                     amount = additionalAmount,
-                                     customerID = z.customerID
-                                 };
+            //var orderedProduct = from x in db.Products.Where(m => m.productID == choosenProductID)
+            //                     from z in db.Customers.Where(n => n.customerID == customerProfile.customerID)
+            //                     select new CustomerOrders
+            //                     {
+            //                         price = x.price * additionalAmount,
+            //                         productName = x.name,
+            //                         productID = x.productID,
+            //                         amount = additionalAmount,
+            //                         customerID = z.customerID
+            //                     };
 
-            // spytac sie Huberta jak z obiektu LinQ[klasa DbSet] zrobic obiekt klasa DbSet
+            var obj = db.Products.Where(z => z.productID == choosenProductID)
+                .Include(x => x.CustomerOrders.CustomersList.Where(y => y.customerID == customerProfile.customerID)
+              .Select(m => new CustomerOrders
+              {
+                  productName = x.CustomerOrders.productName,
+                  productID = x.CustomerOrders.productID,
+                  amount = additionalAmount,
+                  customerID = x.CustomerOrders.customerID
+              })).Select(j => new CustomerOrders
+              {
+                  price = j.price,
+              }).FirstOrDefault();
 
 
-            CustomerOrders orderedProductConvertet = new CustomerOrders();
-            orderedProductConvertet.price = choosenProduct.price * additionalAmount;
-            orderedProductConvertet.productName = choosenProduct.name;
-            orderedProductConvertet.productID = choosenProductID;
-            orderedProductConvertet.amount = additionalAmount;
-            orderedProductConvertet.customerID = customerProfile.customerID;
 
-            db.CustomerOrders.Add(orderedProductConvertet);
+            // CustomerOrders orderedProductConvertet = new CustomerOrders();
+            // orderedProductConvertet.price = choosenProduct.price * additionalAmount;
+            // orderedProductConvertet.productName = choosenProduct.name;
+            // orderedProductConvertet.productID = choosenProductID;
+            // orderedProductConvertet.amount = additionalAmount;
+            // orderedProductConvertet.customerID = customerProfile.customerID;
+
+            // db.CustomerOrders.Add(orderedProductConvertet);
+            db.CustomerOrders.Add(obj);
 
             (from x in db.Products where x.productID == choosenProductID select x).ToList().ForEach(x => x.amount -= additionalAmount);
 

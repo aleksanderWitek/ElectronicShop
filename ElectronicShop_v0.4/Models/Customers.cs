@@ -36,5 +36,7 @@ namespace ElectronicShop_v0._4.Models
         [Compare("password", ErrorMessage = "Password and Confirm Password must be the same")]
         [DataType(DataType.Password)]
         public string confirmPassword { get; set; }
+
+        public virtual CustomerOrders CustomerOrders { get; set; }
     }
 }

@@ -33,5 +33,8 @@ namespace ElectronicShop_v0._4.Models
         [Required]
         [Display(Name = "Amount of the product available")]
         public int amount { get; set; }
+
+        public virtual List<Products> ProductsList { get; set; }
+        public virtual List<Customers> CustomersList { get; set; }
     }
 }

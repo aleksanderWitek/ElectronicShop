@@ -33,9 +33,10 @@ namespace ElectronicShop_v0._4.Models
         [Display(Name = "Amount of the product available")]
         [RegularExpression("^[0-9]+$",ErrorMessage = "Amount must be a whole number")]
         public int amount { get; set; }
-
-        //[Required(ErrorMessage = "You have to enter a number")]
+        
         [RegularExpression("^[0-9]+$", ErrorMessage = "Amount must be a whole number")]
         public int? additionalAmount { get; set; }
+
+        public virtual CustomerOrders CustomerOrders { get; set; }
     }
 }
