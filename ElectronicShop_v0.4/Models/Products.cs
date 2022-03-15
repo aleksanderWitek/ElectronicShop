@@ -36,7 +36,5 @@ namespace ElectronicShop_v0._4.Models
         
         [RegularExpression("^[0-9]+$", ErrorMessage = "Amount must be a whole number")]
         public int? additionalAmount { get; set; }
-
-        public virtual CustomerOrders CustomerOrders { get; set; }
     }
 }

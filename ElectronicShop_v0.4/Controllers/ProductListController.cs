@@ -94,45 +94,32 @@ namespace ElectronicShop_v0._4.Controllers
             var choosenProduct = (Products)Session["choosenProduct"];
             var choosenProductID = choosenProduct.productID;
 
-            //var orderedProduct = from x in db.Products.Where(m => m.productID == choosenProductID)
-            //                     from z in db.Customers.Where(n => n.customerID == customerProfile.customerID)
-            //                     select new CustomerOrders
-            //                     {
-            //                         price = x.price * additionalAmount,
-            //                         productName = x.name,
-            //                         productID = x.productID,
-            //                         amount = additionalAmount,
-            //                         customerID = z.customerID
-            //                     };
-
-            var obj = db.Products.Where(z => z.productID == choosenProductID)
-                .Include(x => x.CustomerOrders.CustomersList.Where(y => y.customerID == customerProfile.customerID)
-              .Select(m => new CustomerOrders
-              {
-                  productName = x.CustomerOrders.productName,
-                  productID = x.CustomerOrders.productID,
-                  amount = additionalAmount,
-                  customerID = x.CustomerOrders.customerID
-              })).Select(j => new CustomerOrders
-              {
-                  price = j.price,
-              }).FirstOrDefault();
+            var orderedProduct = (from x in db.Products.Where(m => m.productID == choosenProductID)
+                                 from z in db.Customers.Where(n => n.customerID == customerProfile.customerID)
+                                 select new
+                                 {
+                                     price = x.price * additionalAmount,
+                                     productName = x.name,
+                                     productID = x.productID,
+                                     amount = additionalAmount,
+                                     customerID = z.customerID
+                                 }).ToList().Select(w => new CustomerOrders
+                                 {
+                                     price = w.price,
+                                     productName = w.productName,
+                                     productID = w.productID,
+                                     amount = w.amount,
+                                     customerID = w.customerID
+                                 }).FirstOrDefault();
 
 
-
-            // CustomerOrders orderedProductConvertet = new CustomerOrders();
-            // orderedProductConvertet.price = choosenProduct.price * additionalAmount;
-            // orderedProductConvertet.productName = choosenProduct.name;
-            // orderedProductConvertet.productID = choosenProductID;
-            // orderedProductConvertet.amount = additionalAmount;
-            // orderedProductConvertet.customerID = customerProfile.customerID;
-
-            // db.CustomerOrders.Add(orderedProductConvertet);
-            db.CustomerOrders.Add(obj);
+            db.CustomerOrders.Add(orderedProduct);
 
             (from x in db.Products where x.productID == choosenProductID select x).ToList().ForEach(x => x.amount -= additionalAmount);
 
             db.SaveChanges();
+
+            additionalAmount = 0;
 
             return RedirectToAction("Index", "Home");
         }
